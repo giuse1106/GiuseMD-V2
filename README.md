@@ -5,7 +5,7 @@
  ----------------------------------------------
  ### `✦ 𝐂𝐎𝐍𝐅𝐈𝐆𝐔𝐑𝐀𝐙𝐈𝐎𝐍𝐄` 
 
- - 𝐂𝐀𝐌𝐁𝐈𝐀𝐑𝐄 𝐍𝐔𝐌𝐄𝐑𝐎 𝐃𝐄𝐋 𝐏𝐑𝐎𝐏𝐑𝐈𝐄𝐓𝐀𝐑𝐈𝐎 [qui](https://github.com/giuse1106/giusemd/blob/master/config.js) 
+ - 𝐂𝐀𝐌𝐁𝐈𝐀𝐑𝐄 𝐍𝐔𝐌𝐄𝐑𝐎 𝐃𝐄𝐋 𝐏𝐑𝐎𝐏𝐑𝐈𝐄𝐓𝐀𝐑𝐈𝐎 [qui](https://github.com/giuse1106/giusemd-v2/blob/master/config.js) 
 
 
 -----------------------------------------------
@@ -48,11 +48,11 @@ pkg upgrade -y && pkg update -y
 ```
 ═════ •⊰✦⊱• ══════
 ```
- cd /sdcard && rm -rf giusemd && git clone https://github.com/giuse1106/giusemd.git
+ cd /sdcard && rm -rf giusemd && git clone https://github.com/giuse1106/giusemd-v2.git
 ```
 ═════ •⊰✦⊱• ══════
 ```
- cd /sdcard/giusemd
+ cd /sdcard/giusemd-v2
 ```
 ═════ •⊰✦⊱• ══════
 ```
