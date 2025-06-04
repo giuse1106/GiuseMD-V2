@@ -48,12 +48,20 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     const fullInviteLink = `https://chat.whatsapp.com/${groupInviteLink}`;
 
     // Crea il messaggio da inviare all'utente invitato
-    const inviteMessage = `Ciao @${number.split('@')[0]}, sono @${conn.user.jid.split('@')[0]} e sono un bot!
-@${m.sender.split('@')[0]} mi ha chiesto di invitarti in questo gruppo:
-*#${groupName}*
-
-Puoi entrare da qui:
-${fullInviteLink}`;
+    const inviteMessage = `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅
+┊ ┊ 👥 𝐈𝐍𝐕𝐈𝐓𝐎 𝐀𝐋 𝐆𝐑𝐔𝐏𝐏𝐎 👥
+┊ ╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅
+┊ ╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅
+┊ ┊ 𝐂𝐢𝐚𝐨 @${𝐧𝐮𝐦𝐛𝐞𝐫.𝐬𝐩𝐥𝐢𝐭('@')[0]}, 𝐬𝐨𝐧𝐨 @${𝐜𝐨𝐧𝐧.𝐮𝐬𝐞𝐫.𝐣𝐢𝐝.𝐬𝐩𝐥𝐢𝐭('@')[0]} 𝐞 
+┊ ┊ 𝐬𝐨𝐧𝐨 𝐮𝐧 𝐛𝐨𝐭! @${𝐦.𝐬𝐞𝐧𝐝𝐞𝐫.𝐬𝐩𝐥𝐢𝐭('@')[0]} 𝐦𝐢 𝐡𝐚 𝐜𝐡𝐢𝐞𝐬𝐭𝐨 𝐝𝐢 𝐢𝐧𝐯𝐢𝐭𝐚𝐫𝐭𝐢 𝐢𝐧 
+┊ ┊ 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨: *#${𝐠𝐫𝐨𝐮𝐩𝐍𝐚𝐦𝐞}*
+┊ ╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅
+┊ ╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅
+┊ ┊ 🔗 ${fullInviteLink}
+┊ ╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅
+┊ ${botName}   -  𝐕𝐞𝐫𝐬𝐢𝐨𝐧𝐞: ${vs}
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`;
 
     try {
         // Invia il messaggio di invito all'utente specificato
