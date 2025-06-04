@@ -37,6 +37,7 @@ let handler = async (message, { conn, usedPrefix }) => {
 ┊ ┊ ➤ ${usedPrefix}𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐢 🔗
 ┊ ┊ ➤ ${usedPrefix}𝐠𝐫𝐮𝐩𝐩𝐨 🎉
 ┊ ┊ ➤ ${usedPrefix}𝐨𝐰𝐧𝐞𝐫 👑
+┊ ┊ ➤ ${usedPrefix}𝐚𝐝𝐦𝐢𝐧 🎉
 ┊ ┊ ➤ ${usedPrefix}𝐜𝐫𝐞𝐝𝐢𝐭𝐢 💬
 ┊ ┊ ➤ ${usedPrefix}𝐬𝐮𝐩𝐩𝐨𝐫𝐭𝐨 ⚠️
 ┊ ┊ ➤ ${usedPrefix}𝐢𝐧𝐟𝐨𝐛𝐨𝐭 ℹ️    
