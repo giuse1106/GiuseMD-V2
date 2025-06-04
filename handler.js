@@ -6,6 +6,7 @@ import path, { join } from 'path'
 import { unwatchFile, watchFile } from 'fs'
 import fs from 'fs'
 import chalk from 'chalk'
+
 /**
  * @type {import('@whiskeysockets/baileys')}
  */
@@ -55,11 +56,24 @@ export async function handler(chatUpdate) {
                 if (!isNumber(user.tprem)) user.tprem = 0
                 if (!user.premium) user.premium = false
                 if (!user.premium) user.premiumTime = 0
-                if (!('name' in user)) user.name = m.name
+                if (!('name' in user)) user.name = m.name // Il nome utente viene salvato qui
                 if (!('muto' in user)) user.muto = false
             } else
                 global.db.data.users[m.sender] = {
                     messaggi: 0,
+                    blasphemy: 0,
+                    msg: {},
+                    exp: 0,
+                    money: 0,
+                    warn: 0,
+                    joincount: 2,
+                    limit: 20,
+                    premium: false,
+                    premiumDate: -1,
+                    tprem: 0,
+                    premiumTime: 0,
+                    name: m.name, // Inizializza il nome anche qui se l'utente è nuovo
+                    muto: false,
                 }
             let chat = global.db.data.chats[m.chat]
             if (typeof chat !== 'object')
@@ -88,11 +102,12 @@ export async function handler(chatUpdate) {
                 if (!isNumber(chat.expired)) chat.expired = 0
                 if (!isNumber(chat.messaggi)) chat.messaggi = 0
                 if (!isNumber(chat.blasphemy)) chat.blasphemy = 0
-                if (!('name' in chat)) chat.name = m.name
-                if (!('name' in chat)) chat.name = this.getName(m.chat)
-            } else
+                if (!('name' in chat)) { // Se il nome non è presente, lo imposto
+                    chat.name = m.isGroup ? (await this.getName(m.chat)) : m.name;
+                }
+            } else {
                 global.db.data.chats[m.chat] = {
-                    name: this.getName(m.chat),
+                    name: m.isGroup ? (await this.getName(m.chat)) : m.name, // Inizializza il nome del gruppo
                     isBanned: false,
                     welcome: true,
                     detect: true,
@@ -129,8 +144,8 @@ export async function handler(chatUpdate) {
                     tprem: 0,
                     money: 0, 
                     warn: 0,
-                    name: m.name,
                 }
+            }
             let settings = global.db.data.settings[this.user.jid]
             if (typeof settings !== 'object') global.db.data.settings[this.user.jid] = {}
             if (settings) {
@@ -440,6 +455,14 @@ remoteJid: m.chat, fromMe: false, id: bang, participant: cancellazzione
                 user.money -= m.money * 1 
                 user.messaggi +=1
                 chat.messaggi +=1
+                // Assicurati che il nome dell'utente sia sempre aggiornato
+                if (m.pushName && user.name !== m.pushName) {
+                    user.name = m.pushName;
+                }
+                // Assicurati che il nome della chat sia sempre aggiornato se è un gruppo
+                if (m.isGroup && chat.name !== (await this.getName(m.chat))) {
+                    chat.name = await this.getName(m.chat);
+                }
             }
 
             let stat
@@ -548,6 +571,10 @@ export async function groupsUpdate(groupsUpdate) {
         const id = groupUpdate.id
         if (!id) continue
         let chats = global.db.data.chats[id], text = ''
+        // Aggiorna il nome del gruppo se cambia
+        if (groupUpdate.subject) {
+            global.db.data.chats[id].name = groupUpdate.subject;
+        }
         if (groupUpdate.icon) text = (chats.sIcon || this.sIcon || conn.sIcon || '```immagine modificata```').replace('@icon', groupUpdate.icon)
         if (groupUpdate.revoke) text = (chats.sRevoke || this.sRevoke || conn.sRevoke || '```link reimpostato, nuovo link:```\n@revoke').replace('@revoke', groupUpdate.revoke)
         if (!text) continue
@@ -634,4 +661,3 @@ watchFile(file, async () => {
     console.log(chalk.redBright("Update 'handler.js'"))
     if (global.reloadHandler) console.log(await global.reloadHandler())
 })
-
