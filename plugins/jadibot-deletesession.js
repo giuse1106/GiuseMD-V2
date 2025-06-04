@@ -1,22 +1,47 @@
-import { readdirSync, statSync, unlinkSync, existsSync, readFileSync, watch, rmSync, promises as fs} from "fs"
-import path, { join } from 'path'
+import { promises as fs } from "fs";
 
-let handler  = async (m, { conn: parentw, usedPrefix, command}, args) => {
+let handler = async (m, { conn, usedPrefix, command }) => {
+    // Determina l'ID dell'utente target
+    // In questo caso, il comando mira all'utente che lo esegue, quindi usiamo m.sender.
+    // Ho rimosso il controllo m.mentionedJid e m.fromMe perché il comando è per l'utente stesso.
+    let userId = m.sender;
+    let uniqueId = userId.split('@')[0];
+    let userName = conn.getName(userId);
 
-let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
-let uniqid = `${who.split`@`[0]}`
-let userS = `${conn.getName(who)}`
+    try {
+        // Tenta di rimuovere la cartella della sessione dell'utente
+        await fs.rm(`./jadibts/${uniqueId}`, { recursive: true, force: true });
+        
+        // Messaggio di successo
+        await conn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ✅ *Sessione SubBot Eliminata!*
+┊ ──────────────────────
+┊ *La sessione SubBot di ${userName} è stata rimossa con successo.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
 
-try {
-await fs.rmdir(`./jadibts/` + uniqid, { recursive: true, force: true })
-await parentw.sendMessage(m.chat, { text: 'ⓘ 𝐒𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐒𝐮𝐛𝐁𝐨𝐭 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐚 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨.' }, { quoted: m })
-} catch(err) {
-if (err.code === 'ENOENT' && err.path === `./jadibts/${uniqid}`) {
-await parentw.sendMessage(m.chat, { text: "ⓘ 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢 𝐒𝐮𝐛𝐁𝐨𝐭 𝐜𝐨𝐥𝐥𝐞𝐠𝐚𝐭𝐞." }, { quoted: m })
-} else {
-await m.reply('ⓘ 𝐒𝐢 𝐞̀ 𝐯𝐞𝐫𝐢𝐟𝐢𝐜𝐚𝐭𝐨 𝐮𝐧 𝐞𝐫𝐫𝐨𝐫𝐞')
-}}}
-handler.command = ['deletebot', 'delsession', 'delessione', 'delsessión', 'delsesion', 'delsesión', 'deletesession', 'deletesesion', 'deletesesión', 'deletesessión', 'eliminarsession']
-handler.private = true
+    } catch (err) {
+        // Se la cartella non esiste (ENOENT), l'utente non ha sessioni collegate
+        if (err.code === 'ENOENT' && err.path === `./jadibts/${uniqueId}`) {
+            await conn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ⓘ *Nessuna Sessione Trovata*
+┊ ──────────────────────
+┊ *${userName}, non hai sessioni SubBot collegate.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
+        } else {
+            // Per altri tipi di errori
+            console.error('Errore durante l\'eliminazione della sessione:', err);
+            await conn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ❌ *Errore Durante l'Eliminazione*
+┊ ──────────────────────
+┊ *Si è verificato un errore inaspettato durante l'eliminazione della sessione.*
+┊ *Dettagli: ${err.message || 'Nessun dettaglio specifico.'}*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
+        }
+    }
+};
 
-export default handler
+// Array dei comandi supportati
+handler.command = ['deletebot', 'delsession', 'delessione', 'delsessión', 'delsesion', 'delsesión', 'deletesession', 'deletesesion', 'deletesesión', 'deletesessión', 'eliminarsession'];
+handler.private = true; // Indica che il comando funziona solo in chat private con il bot
+
+export default handler;

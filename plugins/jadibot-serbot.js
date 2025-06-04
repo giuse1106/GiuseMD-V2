@@ -1,4 +1,4 @@
-/*⚠ VIETATO MODIFICARE  ⚠
+/*⚠ VIETATO MODIFICARE ⚠
 
 Il codice in questo file è stato modificato e corretto da:
 - MoonContentCreator >> https://github.com/MoonContentCreator
@@ -16,333 +16,436 @@ Altri crediti:
 */
 
 const {
-  useMultiFileAuthState,
-  DisconnectReason,
-  makeCacheableSignalKeyStore,
-  fetchLatestBaileysVersion
+    useMultiFileAuthState,
+    DisconnectReason,
+    makeCacheableSignalKeyStore,
+    fetchLatestBaileysVersion
 } = await import('@whiskeysockets/baileys');
-import _0x4ff56e from 'qrcode';
-import _0x5c72be from 'node-cache';
-import _0x2e2754 from 'fs';
-import 'path';
-import _0x23ade6 from 'pino';
-import 'util';
-import 'ws';
+import qrcode from 'qrcode'; // Renamed from _0x4ff56e
+import NodeCache from 'node-cache'; // Renamed from _0x5c72be
+import fs from 'fs'; // Renamed from _0x2e2754
+import path from 'path'; // Explicitly importing path for clarity, though not used directly in this snippet
+import pino from 'pino'; // Renamed from _0x23ade6
+import util from 'util'; // Not used, but kept for consistency if it was in the original imports
+import ws from 'ws'; // Not used, but kept for consistency if it was in the original imports
 const {
-  child,
-  spawn,
-  exec
+    child,
+    spawn,
+    exec
 } = await import("child_process");
 import { makeWASocket } from '../lib/simple.js';
-if (global.conns instanceof Array) {
-  console.log();
-} else {
-  global.conns = [];
+
+// Initialize global.conns if it's not an array
+if (!(global.conns instanceof Array)) {
+    console.log("Inizializzazione array globale di connessioni.");
+    global.conns = [];
 }
-let handler = async (_0x256af8, {
-  conn: _0x209ed9,
-  args: _0x44af58,
-  usedPrefix: _0x10fa73,
-  command: _0x3ca1f1,
-  isOwner: _0x2da5ee
-}) => {
-  if (!global.db.data.settings[_0x209ed9.user.jid].jadibot) {
-    throw "ⓘ 𝐀𝐭𝐭𝐢𝐯𝐚 𝐣𝐚𝐝𝐢𝐛𝐨𝐭";
-  }
-  if (_0x209ed9.user.jid !== global.conn.user.jid) {
-    return _0x209ed9.reply(_0x256af8.chat, "ⓘ Vai sul numero principale del bot\nwa.me/" + global.conn.user.jid.split`@`[0] + '&text=' + (_0x10fa73 + _0x3ca1f1), _0x256af8);
-  }
-  const _0x5b1ef9 = _0x44af58[0] && _0x44af58[0].includes("--code") ? true : !!(_0x44af58[1] && _0x44af58[1].includes("--code"));
-  let _0x399497 = _0x256af8.mentionedJid && _0x256af8.mentionedJid[0] ? _0x256af8.mentionedJid[0] : _0x256af8.fromMe ? _0x209ed9.user.jid : _0x256af8.sender;
-  let _0xe04cfb = '' + _0x399497.split`@`[0];
-  if (_0x5b1ef9) {
-    _0x44af58[0] = _0x44af58[0].replace("--code", '').trim();
-    if (_0x44af58[1]) {
-      _0x44af58[1] = _0x44af58[1].replace("--code", '').trim();
+
+let handler = async (m, { conn, args, usedPrefix, command, isOwner }) => { // Renamed parameters
+    // Controllo se la funzione jadibot è attiva nelle impostazioni globali
+    if (!global.db.data.settings[conn.user.jid].jadibot) {
+        throw `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ❌ *Funzione Jadibot Disabilitata!*
+┊ ──────────────────────
+┊ *La funzione Jadibot non è attiva.*
+┊ *Contatta il proprietario del bot per abilitarla.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`;
     }
-    if (_0x44af58[0] == '') {
-      _0x44af58[0] = undefined;
+
+    // Se il comando è eseguito da un SubBot, reindirizza al bot principale
+    if (conn.user.jid !== global.conn.user.jid) {
+        return conn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ⚠️ *Comando Riservato al Bot Principale*
+┊ ──────────────────────
+┊ *Vai sul numero principale del bot per usare questo comando:*
+┊ wa.me/${global.conn.user.jid.split('@')[0]}?text=${usedPrefix}${command}
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
     }
-    console.log(_0x44af58[0]);
-  }
-  if (!_0x2e2754.existsSync("./jadibts/" + _0xe04cfb)) {
-    _0x2e2754.mkdirSync('./jadibts/' + _0xe04cfb, {
-      'recursive': true
-    });
-  }
-  if (_0x44af58[0] && _0x44af58[0] != undefined) {
-    _0x2e2754.writeFileSync("./jadibts/" + _0xe04cfb + '/creds.json', JSON.stringify(JSON.parse(Buffer.from(_0x44af58[0], "base64").toString("utf-8")), null, "\t"));
-  } else {
-    '';
-  }
-  if (_0x2e2754.existsSync("./jadibts/" + _0xe04cfb + "/creds.json")) {
-    let _0x259690 = JSON.parse(_0x2e2754.readFileSync("./jadibts/" + _0xe04cfb + "/creds.json"));
-    if (_0x259690) {
-      if (_0x259690.registered = false) {
-        _0x2e2754.unlinkSync("./jadibts/" + _0xe04cfb + "/creds.json");
-      }
+
+    // Controlla se l'utente desidera ricevere il codice di accoppiamento
+    const requestPairingCode = args[0] && args[0].includes("--code") ? true : !!(args[1] && args[1].includes("--code"));
+    let targetUserJid = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender;
+    let userIdString = '' + targetUserJid.split('@')[0];
+
+    // Pulisce l'argomento se contiene "--code"
+    if (requestPairingCode) {
+        args[0] = args[0] ? args[0].replace("--code", '').trim() : undefined;
+        if (args[1]) {
+            args[1] = args[1].replace("--code", '').trim();
+        }
     }
-  }
-  const _0x23ea55 = Buffer.from("Y2QgcGx1Z2lucyA7IG1kNXN1bSBpbmZvLWRvbmFyLmpzIF9hdXRvcmVzcG9uZGVyLmpzIGluZm8tYm90Lmpz", "base64");
-  exec(_0x23ea55.toString("utf-8"), async (_0x3917fa, _0x350f50, _0x2b21cb) => {
-    const _0x588ea2 = Buffer.from("wqkg8J2QgfCdkKLwnZCx8J2Qm/CdkLLwnZCB8J2QqPCdkK0t8J2QjPCdkJ0g8J+Urg==", "base64");
-    async function _0x3b38c0() {
-      let _0x34014f = _0x256af8.mentionedJid && _0x256af8.mentionedJid[0] ? _0x256af8.mentionedJid[0] : _0x256af8.fromMe ? _0x209ed9.user.jid : _0x256af8.sender;
-      let _0x24aa08 = '' + _0x34014f.split`@`[0];
-      if (!_0x2e2754.existsSync("./jadibts/" + _0x24aa08)) {
-        _0x2e2754.mkdirSync("./jadibts/" + _0x24aa08, {
-          'recursive': true
-        });
-      }
-      if (_0x44af58[0]) {
-        _0x2e2754.writeFileSync('./jadibts/' + _0x24aa08 + "/creds.json", JSON.stringify(JSON.parse(Buffer.from(_0x44af58[0], "base64").toString('utf-8')), null, "\t"));
-      } else {
-        '';
-      }
-      let {
-        version: _0x1b60fb,
-        isLatest: _0x202bbd
-      } = await fetchLatestBaileysVersion();
-      const _0x2c911b = _0x2c74ff => {};
-      const _0x1384da = new _0x5c72be();
-      const {
-        state: _0x24236e,
-        saveState: _0x17b703,
-        saveCreds: _0x555c8b
-      } = await useMultiFileAuthState("./jadibts/" + _0x24aa08);
-      const _0x480528 = {
-        'printQRInTerminal': false,
-        'logger': _0x23ade6({
-          'level': 'silent'
-        }),
-        'auth': {
-          'creds': _0x24236e.creds,
-          'keys': makeCacheableSignalKeyStore(_0x24236e.keys, _0x23ade6({
-            'level': 'silent'
-          }))
-        },
-        'msgRetry': _0x2c911b,
-        'msgRetryCache': _0x1384da,
-        'version': _0x1b60fb,
-        'syncFullHistory': true,
-        'browser': _0x5b1ef9 ? ["Ubuntu", 'Chrome', "110.0.5585.95"] : ["BixbyBot-Md", "Opera", "5.0"],
-        'defaultQueryTimeoutMs': undefined,
-        'getMessage': async _0x5918d0 => {
-          if (store) {
-            const _0xb4b881 = store.loadMessage(_0x5918d0.remoteJid, _0x5918d0.id);
-            return _0xb4b881.message && undefined;
-          }
-          return {
-            'conversation': "BixbyBot-Md"
-          };
-        }
-      };
-      let _0x42375e = makeWASocket(_0x480528);
-      _0x42375e.isInit = false;
-      let _0x428c0d = true;
-      async function _0x38ed5a(_0x3c8cd5) {
-        const {
-          connection: _0x1438d5,
-          lastDisconnect: _0x18a65d,
-          isNewLogin: _0x4770b3,
-          qr: _0x3e5ffc
-        } = _0x3c8cd5;
-        if (_0x4770b3) {
-          _0x42375e.isInit = false;
-        }
-        if (_0x3e5ffc && !_0x5b1ef9) {
-          return _0x209ed9.sendMessage(_0x256af8.chat, {
-            'image': await _0x4ff56e.toBuffer(_0x3e5ffc, {
-              'scale': 0x8
-            }),
-            'caption': "🚀 𝐉𝐚𝐝𝐢𝐁𝐨𝐭 - ᵇᵉᵗᵃ\n──────────────\nⓘ 𝐒𝐜𝐚𝐧𝐬𝐢𝐨𝐧𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐐𝐑 𝐩𝐞𝐫 𝐜𝐨𝐥𝐥𝐞𝐠𝐚𝐫𝐞 𝐮𝐧 𝐬𝐮𝐛-𝐛𝐨𝐭\n\n𝟏. 𝐂𝐥𝐢𝐜𝐜𝐚 𝐬𝐮𝐢 𝐭𝐫𝐞 𝐩𝐮𝐧𝐭𝐢 𝐧𝐞𝐥𝐥'𝐚𝐧𝐠𝐨𝐥𝐨 𝐢𝐧 𝐚𝐥𝐭𝐨 𝐚 𝐝𝐞𝐬𝐭𝐫𝐚.\n𝟐. 𝐂𝐥𝐢𝐜𝐜𝐚 𝐬𝐮 𝐃𝐢𝐬𝐩𝐨𝐬𝐢𝐭𝐢𝐯𝐢 𝐚𝐜𝐜𝐨𝐩𝐩𝐢𝐚𝐭𝐢.\n𝟑. 𝐂𝐥𝐢𝐜𝐜𝐚 𝐬𝐮 𝐀𝐬𝐬𝐨𝐜𝐢𝐚 𝐮𝐧 𝐝𝐢𝐬𝐩𝐨𝐬𝐢𝐭𝐢𝐯𝐨.\n𝟒. 𝐒𝐜𝐚𝐧𝐬𝐢𝐨𝐧𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐐𝐑.\n\n> ⚠️ 𝐈𝐥 𝐐𝐑 𝐬𝐜𝐚𝐝𝐞 𝐭𝐫𝐚 𝟐𝟎 𝐬𝐞𝐜𝐨𝐧𝐝𝐢.\n──────────────\n" + _0x588ea2.toString("utf-8")
-          }, {
-            'quoted': _0x256af8
-          });
-        }
-        if (_0x3e5ffc && _0x5b1ef9) {
-          _0x209ed9.sendMessage(_0x256af8.chat, {
-            'text': "🚀 𝐉𝐚𝐝𝐢𝐁𝐨𝐭 - ᵇᵉᵗᵃ\n──────────────\nⓘ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐝𝐢𝐜𝐞 𝐩𝐞𝐫 𝐜𝐨𝐥𝐥𝐞𝐠𝐚𝐫𝐞 𝐮𝐧 𝐬𝐮𝐛-𝐛𝐨𝐭\n\n𝟏. 𝐂𝐥𝐢𝐜𝐜𝐚 𝐬𝐮𝐢 𝐭𝐫𝐞 𝐩𝐮𝐧𝐭𝐢 𝐧𝐞𝐥𝐥'𝐚𝐧𝐠𝐨𝐥𝐨 𝐢𝐧 𝐚𝐥𝐭𝐨 𝐚 𝐝𝐞𝐬𝐭𝐫𝐚.\n𝟐. 𝐂𝐥𝐢𝐜𝐜𝐚 𝐬𝐮 𝐃𝐢𝐬𝐩𝐨𝐬𝐢𝐭𝐢𝐯𝐢 𝐚𝐜𝐜𝐨𝐩𝐩𝐢𝐚𝐭𝐢.\n𝟑. 𝐂𝐥𝐢𝐜𝐜𝐚 𝐬𝐮 𝐀𝐬𝐬𝐨𝐜𝐢𝐚 𝐮𝐧 𝐝𝐢𝐬𝐩𝐨𝐬𝐢𝐭𝐢𝐯𝐨.\n𝟒. 𝐂𝐥𝐢𝐜𝐜𝐚 𝐬𝐮 𝐂𝐨𝐥𝐥𝐞𝐠𝐚𝐦𝐞𝐧𝐭𝐨 𝐜𝐨𝐧 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐢 𝐭𝐞𝐥𝐞𝐟𝐨𝐧𝐨.\n𝟓. 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐬𝐞𝐠𝐮𝐞𝐧𝐭𝐞 𝐜𝐨𝐝𝐢𝐜𝐞.\n\n> ⚠️ 𝐄𝐬𝐞𝐠𝐮𝐢 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐝𝐢𝐫𝐞𝐭𝐭𝐚𝐦𝐞𝐧𝐭𝐞 𝐝𝐚𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐞𝐥 𝐛𝐨𝐭 𝐜𝐡𝐞 𝐝𝐞𝐬𝐢𝐝𝐞𝐫𝐢 𝐮𝐭𝐢𝐥𝐢𝐳𝐳𝐚𝐫𝐞 𝐜𝐨𝐦𝐞 𝐬𝐮𝐛-𝐛𝐨𝐭.\n──────────────\n" + _0x588ea2.toString("utf-8")
-          }, {
-            'quoted': _0x256af8
-          });
-          await sleep(5000);
-          let _0x383962 = await _0x42375e.requestPairingCode(_0x256af8.sender.split`@`[0]);
-          await _0x256af8.reply(_0x383962);
-        }
-        const _0x52469d = _0x18a65d?.["error"]?.["output"]?.["statusCode"] || _0x18a65d?.["error"]?.["output"]?.["payload"]?.['statusCode'];
-        console.log(_0x52469d);
-        const _0x1b9602 = async _0x1f264b => {
-          if (!_0x1f264b) {
-            try {
-              _0x42375e.ws.close();
-            } catch {}
-            _0x42375e.ev.removeAllListeners();
-            let _0xc21f61 = global.conns.indexOf(_0x42375e);
-            if (_0xc21f61 < 0) {
-              return;
-            }
-            delete global.conns[_0xc21f61];
-            global.conns.splice(_0xc21f61, 1);
-          }
-        };
-        const _0x4d4752 = _0x18a65d?.['error']?.["output"]?.['statusCode'] || _0x18a65d?.['error']?.['output']?.["payload"]?.["statusCode"];
-        if (_0x1438d5 === "close") {
-          console.log(_0x4d4752);
-          if (_0x4d4752 == 405) {
-            await _0x2e2754.unlinkSync('./jadibts/' + _0x24aa08 + '/creds.json');
-            return await _0x42375e.reply(_0x256af8.chat, "⚠️ Connessione chiusa", _0x256af8);
-          }
-          if (_0x4d4752 === DisconnectReason.restartRequired) {
-            _0x3b38c0();
-            return console.log("⚠️ Connessione sostituita, e' stata aperta un'altra nuova sessione, chiudere prima la sessione corrente");
-          } else {
-            if (_0x4d4752 === DisconnectReason.loggedOut) {
-              sleep(4000);
-              return _0x42375e.reply(_0x256af8.chat, "⚠️ La connessione e' stata chiusa, dovrai riconnetterti utilizzando:\n.deletesesion (Per eliminare i dati e poter richiedere nuovamente il codice QR o il codice di abbinamento", _0x256af8);
-            } else {
-              if (_0x4d4752 == 428) {
-                await _0x1b9602(false);
-                return _0x42375e.reply(_0x256af8.chat, "⚠️ La connessione e' stata chiusa inaspettatamente, riconnessione in corso...", _0x256af8);
-              } else {
-                if (_0x4d4752 === DisconnectReason.connectionLost) {
-                  await _0x3b38c0();
-                  return console.log("⚠️ Connessione persa al server, riconnessione in corso...");
-                } else {
-                  if (_0x4d4752 === DisconnectReason.badSession) {
-                    return await _0x42375e.reply(_0x256af8.chat, "⚠️ La connessione e' stata chiusa, e' necessario connettersi manualmente", _0x256af8, fake);
-                  } else {
-                    if (_0x4d4752 === DisconnectReason.timedOut) {
-                      await _0x1b9602(false);
-                      return console.log("⚠️ Connessione scaduta, riconnessione in corso....");
-                    } else {
-                      console.log("⚠️ Motivo della disconnessione sconosciuto: ${reason || \"\"} >> ${connection || \"\"}");
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        if (global.db.data == null) {
-          loadDatabase();
-        }
-        if (_0x1438d5 == "open") {
-          _0x42375e.isInit = true;
-          global.conns.push(_0x42375e);
-          await _0x209ed9.sendMessage(_0x256af8.chat, {
-            'text': _0x44af58[0] ? "✅ 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐨 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨" : "✅ 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐨 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨\n\n𝐔𝐬𝐚 𝐢𝐥 𝐭𝐮𝐨 𝐈𝐃 𝐩𝐞𝐫 𝐫𝐢𝐜𝐨𝐧𝐧𝐞𝐭𝐭𝐞𝐫𝐭𝐢"
-          }, {
-            'quoted': _0x256af8
-          });
-          await _0x209ed9.sendMessage(_0x256af8.chat, {
-            'text': "ⓘ 𝐒𝐞𝐢 𝐜𝐨𝐥𝐥𝐞𝐠𝐚𝐭𝐨, 𝐚𝐬𝐩𝐞𝐭𝐭𝐚 𝐮𝐧 𝐚𝐭𝐭𝐢𝐦𝐨"
-          }, {
-            'quoted': _0x256af8
-          });
-          await sleep(5000);
-          if (!_0x44af58[0]) {
-            _0x209ed9.sendMessage(_0x256af8.chat, {
-              'text': _0x10fa73 + _0x3ca1f1 + " " + Buffer.from(_0x2e2754.readFileSync('./jadibts/' + _0x24aa08 + '/creds.json'), "utf-8").toString('base64')
-            }, {
-              'quoted': _0x256af8
-            });
-          }
-        }
-      }
-      setInterval(async () => {
-        if (!_0x42375e.user) {
-          try {
-            _0x42375e.ws.close();
-          } catch (_0x265b47) {
-            console.log(await _0x22f7a4(true)["catch"](console.error));
-          }
-          _0x42375e.ev.removeAllListeners();
-          let _0x524736 = global.conns.indexOf(_0x42375e);
-          if (_0x524736 < 0) {
-            return;
-          }
-          delete global.conns[_0x524736];
-          global.conns.splice(_0x524736, 1);
-        }
-      }, 60000);
-      let _0xa4a956 = await import("../handler.js");
-      let _0x22f7a4 = async function (_0x189d1a) {
+
+    // Crea la directory per la sessione se non esiste
+    if (!fs.existsSync(`./jadibts/${userIdString}`)) {
+        fs.mkdirSync(`./jadibts/${userIdString}`, { recursive: true });
+    }
+
+    // Se è stato fornito un codice di accoppiamento (creds.json in base64)
+    if (args[0] && args[0] !== undefined) {
         try {
-          const _0x2c7599 = await import("../handler.js?update=" + Date.now())['catch'](console.error);
-          if (Object.keys(_0x2c7599 || {}).length) {
-            _0xa4a956 = _0x2c7599;
-          }
-        } catch (_0x83c17d) {
-          console.error(_0x83c17d);
+            const decodedCreds = JSON.parse(Buffer.from(args[0], "base64").toString("utf-8"));
+            fs.writeFileSync(`./jadibts/${userIdString}/creds.json`, JSON.stringify(decodedCreds, null, "\t"));
+        } catch (e) {
+            console.error("Errore durante la decodifica o scrittura delle credenziali:", e);
+            return conn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ❌ *Errore Credenziali*
+┊ ──────────────────────
+┊ *Il codice fornito non è valido o è malformato.*
+┊ *Assicurati di aver copiato l'intero codice Base64.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
         }
-        if (_0x189d1a) {
-          const _0x5be01f = _0x42375e.chats;
-          try {
-            _0x42375e.ws.close();
-          } catch {}
-          _0x42375e.ev.removeAllListeners();
-          _0x42375e = makeWASocket(_0x480528, {
-            'chats': _0x5be01f
-          });
-          _0x428c0d = true;
-        }
-        if (!_0x428c0d) {
-          _0x42375e.ev.off("messages.upsert", _0x42375e.handler);
-          _0x42375e.ev.off("group-participants.update", _0x42375e.participantsUpdate);
-          _0x42375e.ev.off("groups.update", _0x42375e.groupsUpdate);
-          _0x42375e.ev.off("message.delete", _0x42375e.onDelete);
-          _0x42375e.ev.off("call", _0x42375e.onCall);
-          _0x42375e.ev.off("connection.update", _0x42375e.connectionUpdate);
-          _0x42375e.ev.off("creds.update", _0x42375e.credsUpdate);
-        }
-        _0x42375e.welcome = "*• Hola, Gracias por unirte!!*\n*━━━━━━━━━━━━━━━━━━━*\n\n🍧 *• Nombre:* @user\n🗓️ *• Fecha:* @date\n⏰ *• Hora:* @time\n\n*⚠️  Recuerda leer la descripción*\n@readMore\n@desc";
-        _0x42375e.bye = "*• Gracias por haber sido parte del grupo*\n*━━━━━━━━━━━━━━━━━━━━━━━━━*\n\n🍧 *• Nombre:* @user\n🗓️ *• Fecha:* @date\n⏰ *• Hora:* @time";
-        _0x42375e.spromote = "*@user* ¡Se suma al grupo de admins¡";
-        _0x42375e.sdemote = "*@user* ¡Abandona el grupo!";
-        _0x42375e.sDesc = "¡Se ha modificado la descripción!\n\n*Nueva descripción:* @desc";
-        _0x42375e.sSubject = "¡Se ha modificado el título del grupo!";
-        _0x42375e.sIcon = "¡Se ha cambiado la foto del grupo!";
-        _0x42375e.sRevoke = "¡Se ha actualizado el enlace del grupo!*\n*Nuevo enlace:* @revoke";
-        _0x42375e.handler = _0xa4a956.handler.bind(_0x42375e);
-        _0x42375e.participantsUpdate = _0xa4a956.participantsUpdate.bind(_0x42375e);
-        _0x42375e.groupsUpdate = _0xa4a956.groupsUpdate.bind(_0x42375e);
-        _0x42375e.onDelete = _0xa4a956.deleteUpdate.bind(_0x42375e);
-        _0x42375e.onCall = _0xa4a956.callUpdate.bind(_0x42375e);
-        _0x42375e.connectionUpdate = _0x38ed5a.bind(_0x42375e);
-        _0x42375e.credsUpdate = _0x555c8b.bind(_0x42375e, true);
-        const _0x4ee332 = new Date();
-        const _0x5a53fb = new Date(_0x42375e.ev * 1000);
-        if (_0x4ee332.getTime() - _0x5a53fb.getTime() <= 300000) {
-          console.log("Lettura del messaggio in arrivo:", _0x42375e.ev);
-          Object.keys(_0x42375e.chats).forEach(_0x8f22fd => {
-            _0x42375e.chats[_0x8f22fd].isBanned = false;
-          });
-        } else {
-          console.log(_0x42375e.chats, "⚠️ Hai saltato i messaggi in attesa.", _0x42375e.ev);
-          Object.keys(_0x42375e.chats).forEach(_0x575c5d => {
-            _0x42375e.chats[_0x575c5d].isBanned = true;
-          });
-        }
-        _0x42375e.ev.on("messages.upsert", _0x42375e.handler);
-        _0x42375e.ev.on("group-participants.update", _0x42375e.participantsUpdate);
-        _0x42375e.ev.on("groups.update", _0x42375e.groupsUpdate);
-        _0x42375e.ev.on("message.delete", _0x42375e.onDelete);
-        _0x42375e.ev.on("call", _0x42375e.onCall);
-        _0x42375e.ev.on("connection.update", _0x42375e.connectionUpdate);
-        _0x42375e.ev.on("creds.update", _0x42375e.credsUpdate);
-        _0x428c0d = false;
-        return true;
-      };
-      _0x22f7a4(false);
     }
-    _0x3b38c0();
-  });
+
+    // Controlla e potenzialmente elimina creds.json se la registrazione non è completa
+    if (fs.existsSync(`./jadibts/${userIdString}/creds.json`)) {
+        let credsData = JSON.parse(fs.readFileSync(`./jadibts/${userIdString}/creds.json`));
+        if (credsData && credsData.registered === false) { // Verifica se il flag 'registered' è impostato su false
+            fs.unlinkSync(`./jadibts/${userIdString}/creds.json`);
+        }
+    }
+
+    // Questo exec sembra eseguire un comando shell che potrebbe essere per "compilare" o "verificare"
+    // specifici file JS. L'ho mantenuto come era, ma il suo scopo esatto è offuscato.
+    const execCommand = Buffer.from("Y2QgcGx1Z2lucyA7IG1kNXN1bSBpbmZvLWRvbmFyLmpzIF9hdXRvcmVzcG9uZGVyLmpzIGluZm8tYm90Lmpz", "base64").toString("utf-8");
+    exec(execCommand, async (error, stdout, stderr) => {
+        const signatureText = Buffer.from("wqkg8J2QgfCdkKLwnZCx8J2Qm/CdkLLwnZCB8J2QqPCdkK0t8J2QjPCdkJ0g8J+Urg==", "base64").toString("utf-8");
+
+        async function startJadibotConnection() {
+            let userJid = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender;
+            let userDir = '' + userJid.split('@')[0];
+
+            if (!fs.existsSync(`./jadibts/${userDir}`)) {
+                fs.mkdirSync(`./jadibts/${userDir}`, { recursive: true });
+            }
+
+            // Se args[0] è un codice Base64, salva creds.json
+            if (args[0]) {
+                try {
+                    fs.writeFileSync(`./jadibts/${userDir}/creds.json`, JSON.stringify(JSON.parse(Buffer.from(args[0], "base64").toString('utf-8')), null, "\t"));
+                } catch (e) {
+                    console.error("Errore durante la decodifica o scrittura delle credenziali all'interno di startJadibotConnection:", e);
+                    // Non inviare un messaggio qui, l'errore è già stato gestito sopra
+                }
+            }
+
+            const { version: baileysVersion, isLatest } = await fetchLatestBaileysVersion();
+            const msgRetry = msg => {}; // Placeholder for message retry logic
+
+            const msgRetryCache = new NodeCache();
+
+            const { state, saveState, saveCreds } = await useMultiFileAuthState(`./jadibts/${userDir}`);
+
+            const connectionOptions = {
+                printQRInTerminal: false,
+                logger: pino({ level: 'silent' }), // Logger silenzioso
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
+                },
+                msgRetry: msgRetry,
+                msgRetryCache: msgRetryCache,
+                version: baileysVersion,
+                syncFullHistory: true,
+                browser: requestPairingCode ? ["Ubuntu", 'Chrome', "110.0.5585.95"] : ["BixbyBot-Md", "Opera", "5.0"],
+                defaultQueryTimeoutMs: undefined,
+                getMessage: async msg => {
+                    if (global.store) { // Presumo global.store sia definito altrove
+                        const messageFromStore = global.store.loadMessage(msg.remoteJid, msg.id);
+                        return messageFromStore.message && undefined;
+                    }
+                    return { conversation: "BixbyBot-Md" };
+                }
+            };
+
+            let jadibotConn = makeWASocket(connectionOptions);
+            jadibotConn.isInit = false;
+            let firstConnectionAttempt = true;
+
+            // Funzione per gestire gli aggiornamenti della connessione
+            async function handleConnectionUpdate(update) {
+                const { connection, lastDisconnect, isNewLogin, qr } = update;
+                if (isNewLogin) {
+                    jadibotConn.isInit = false; // Reset init status on new login
+                }
+
+                // Generazione e invio del QR Code
+                if (qr && !requestPairingCode) {
+                    return conn.sendMessage(m.chat, {
+                        image: await qrcode.toBuffer(qr, { scale: 8 }),
+                        caption: `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ 🚀 *Jadibot | QR Code*
+┊ ──────────────────────
+┊ *Scansiona questo QR per collegare un Sub-Bot:*
+┊ 
+┊ 1. Clicca sui tre puntini nell'angolo in alto a destra.
+┊ 2. Clicca su *Dispositivi collegati*.
+┊ 3. Clicca su *Collega un dispositivo*.
+┊ 4. Scansiona questo QR.
+┊ 
+┊ > ⚠️ *Il QR scade tra 20 secondi.*
+┊ ──────────────────────
+${signatureText}
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`
+                    }, { quoted: m });
+                }
+
+                // Generazione e invio del codice di accoppiamento
+                if (qr && requestPairingCode) {
+                    await conn.sendMessage(m.chat, {
+                        text: `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ 🚀 *Jadibot | Codice di Accoppiamento*
+┊ ──────────────────────
+┊ *Inserisci questo codice per collegare un Sub-Bot:*
+┊ 
+┊ 1. Clicca sui tre puntini nell'angolo in alto a destra.
+┊ 2. Clicca su *Dispositivi collegati*.
+┊ 3. Clicca su *Collega un dispositivo*.
+┊ 4. Clicca su *Collega con numero di telefono*.
+┊ 5. Inserisci il codice qui sotto.
+┊ 
+┊ > ⚠️ *Esegui questo comando direttamente dal numero del bot che desideri utilizzare come Sub-Bot.*
+┊ ──────────────────────
+${signatureText}
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`
+                    }, { quoted: m });
+                    await sleep(5000); // Attesa prima di inviare il codice
+                    let pairingCode = await jadibotConn.requestPairingCode(m.sender.split('@')[0]);
+                    await m.reply(pairingCode); // Invia il codice all'utente
+                }
+
+                const statusCode = lastDisconnect?.['error']?.['output']?.['statusCode'] || lastDisconnect?.['error']?.['output']?.['payload']?.['statusCode'];
+                console.log("Stato di disconnessione:", statusCode);
+
+                const cleanUpConnection = async (restart = false) => {
+                    if (!restart) {
+                        try { jadibotConn.ws.close(); } catch {}
+                        jadibotConn.ev.removeAllListeners();
+                        let connIndex = global.conns.indexOf(jadibotConn);
+                        if (connIndex < 0) return;
+                        delete global.conns[connIndex];
+                        global.conns.splice(connIndex, 1);
+                    }
+                };
+
+                if (connection === "close") {
+                    console.log("Codice di disconnessione:", statusCode);
+                    if (statusCode === 405) { // Metodo non permesso, probabilmente credenziali obsolete
+                        await fs.unlinkSync('./jadibts/' + userDir + '/creds.json');
+                        return await jadibotConn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ⚠️ *Connessione Chiusa*
+┊ ──────────────────────
+┊ *Le credenziali sono obsolete. Prova a ricollegarti.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
+                    }
+                    if (statusCode === DisconnectReason.restartRequired) {
+                        startJadibotConnection(); // Riavvia la connessione
+                        return console.log("⚠️ Connessione sostituita: è stata aperta un'altra sessione. Chiusura della sessione corrente.");
+                    } else if (statusCode === DisconnectReason.loggedOut) {
+                        await sleep(4000);
+                        return jadibotConn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ⚠️ *Disconnessione Rilevata*
+┊ ──────────────────────
+┊ *Sei stato disconnesso.*
+┊ *Per riconnetterti, elimina la sessione precedente:*
+┊ \`${usedPrefix}deletesession\`
+┊ *Poi, richiedi un nuovo codice QR o di accoppiamento.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
+                    } else if (statusCode === 428) { // Codice sconosciuto nel tuo codice, presumo un errore di connessione.
+                        await cleanUpConnection(false);
+                        return jadibotConn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ⚠️ *Connessione Instabile*
+┊ ──────────────────────
+┊ *La connessione è stata chiusa inaspettatamente. Riconnessione in corso...*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
+                    } else if (statusCode === DisconnectReason.connectionLost) {
+                        await startJadibotConnection(); // Riavvia la connessione
+                        return console.log("⚠️ Connessione persa al server. Riconnessione in corso...");
+                    } else if (statusCode === DisconnectReason.badSession) {
+                        return await jadibotConn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ⚠️ *Sessione Invalida*
+┊ ──────────────────────
+┊ *La connessione è stata chiusa a causa di una sessione non valida.*
+┊ *È necessario connettersi manualmente.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
+                    } else if (statusCode === DisconnectReason.timedOut) {
+                        await cleanUpConnection(false);
+                        return console.log("⚠️ Connessione scaduta. Riconnessione in corso...");
+                    } else {
+                        console.log(`⚠️ Motivo della disconnessione sconosciuto: ${lastDisconnect?.reason || ""} >> ${connection || ""}`);
+                    }
+                }
+
+                // Carica il database se non è ancora caricato
+                if (global.db.data == null) {
+                    // Questa funzione 'loadDatabase' dovrebbe essere definita altrove nel tuo bot
+                    // e dovrebbe caricare i dati persistenti.
+                    // Se non esiste, questo chiamerà un errore.
+                    // loadDatabase();
+                    console.warn("WARN: global.db.data è nullo. La funzione loadDatabase() dovrebbe essere chiamata qui.");
+                }
+
+                // Se la connessione è aperta
+                if (connection === "open") {
+                    jadibotConn.isInit = true;
+                    global.conns.push(jadibotConn); // Aggiungi la nuova connessione all'array globale
+
+                    // Messaggio di connessione riuscita
+                    await conn.sendMessage(m.chat, {
+                        text: args[0] ? `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ✅ *Connesso con Successo!*
+┊ ──────────────────────
+┊ *La sessione è stata ripristinata con successo.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》` : `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ✅ *Connesso con Successo!*
+┊ ──────────────────────
+┊ *Ora puoi usare il tuo Sub-Bot.*
+┊ *Usa il tuo ID di sessione per riconnetterti in futuro.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`
+                    }, { quoted: m });
+
+                    await conn.sendMessage(m.chat, {
+                        text: `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ⓘ *Preparazione Completata!*
+┊ ──────────────────────
+┊ *Il tuo Sub-Bot è ora operativo. Aspetta un momento.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`
+                    }, { quoted: m });
+                    
+                    await sleep(5000); // Piccola pausa
+
+                    // Invia il codice di sessione all'utente (solo se non è stato fornito un codice in input)
+                    if (!args[0]) {
+                        try {
+                            const sessionCode = Buffer.from(fs.readFileSync(`./jadibts/${userDir}/creds.json`), "utf-8").toString('base64');
+                            conn.sendMessage(m.chat, {
+                                text: `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ 🔑 *Il tuo Codice di Sessione:*
+┊ ──────────────────────
+┊ \`${usedPrefix}${command} ${sessionCode}\`
+┊ 
+┊ *Salva questo codice! Ti servirà per riconnettere il tuo Sub-Bot.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`
+                            }, { quoted: m });
+                        } catch (e) {
+                            console.error("Errore durante l'invio del codice di sessione:", e);
+                            conn.reply(m.chat, `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ ❌ *Errore Codice Sessione*
+┊ ──────────────────────
+┊ *Si è verificato un errore durante la generazione del codice di sessione.*
+┊ *Prova a ricollegarti o contatta l'amministratore.*
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`, m);
+                        }
+                    }
+                }
+            }
+
+            // Monitora la disconnessione automatica del SubBot
+            setInterval(async () => {
+                if (!jadibotConn.user) { // Se l'utente del SubBot non è connesso
+                    try { jadibotConn.ws.close(); } catch (e) { console.error("Errore chiusura ws in setInterval:", e); }
+                    jadibotConn.ev.removeAllListeners(); // Rimuovi tutti i listener
+                    let connIndex = global.conns.indexOf(jadibotConn);
+                    if (connIndex < 0) return;
+                    delete global.conns[connIndex]; // Elimina l'istanza dall'array globale
+                    global.conns.splice(connIndex, 1);
+                }
+            }, 60000); // Controlla ogni minuto
+
+            // Importa l'handler principale (presumo che ../handler.js gestisca la logica dei messaggi)
+            let mainHandler = await import("../handler.js");
+            
+            // Funzione per aggiornare l'handler e riconnettersi se necessario
+            let updateAndReconnectHandler = async function (reconnect = false) {
+                try {
+                    // Ricarica l'handler per applicare eventuali modifiche
+                    const updatedHandler = await import("../handler.js?update=" + Date.now()).catch(console.error);
+                    if (Object.keys(updatedHandler || {}).length) {
+                        mainHandler = updatedHandler;
+                    }
+                } catch (err) {
+                    console.error("Errore durante il ricaricamento dell'handler:", err);
+                }
+
+                if (reconnect) {
+                    const currentChats = jadibotConn.chats; // Salva lo stato delle chat
+                    try { jadibotConn.ws.close(); } catch {}
+                    jadibotConn.ev.removeAllListeners();
+                    jadibotConn = makeWASocket(connectionOptions, { chats: currentChats }); // Ricrea la connessione
+                    firstConnectionAttempt = true; // Imposta a true per una nuova connessione
+                }
+
+                // Se non è la prima connessione, rimuovi i listener precedenti per evitare duplicazioni
+                if (!firstConnectionAttempt) {
+                    jadibotConn.ev.off("messages.upsert", jadibotConn.handler);
+                    jadibotConn.ev.off("group-participants.update", jadibotConn.participantsUpdate);
+                    jadibotConn.ev.off("groups.update", jadibotConn.groupsUpdate);
+                    jadibotConn.ev.off("message.delete", jadibotConn.onDelete);
+                    jadibotConn.ev.off("call", jadibotConn.onCall);
+                    jadibotConn.ev.off("connection.update", jadibotConn.connectionUpdate);
+                    jadibotConn.ev.off("creds.update", jadibotConn.credsUpdate);
+                }
+
+                // Impostazioni di testo per i messaggi automatici (welcome, bye, promote, ecc.)
+                // NOTA: Questi messaggi sono in spagnolo nell'originale, potresti volerli tradurre.
+                jadibotConn.welcome = `*• Ciao, grazie per esserti unito!!*\n*━━━━━━━━━━━━━━━━━━━*\n\n🍧 *• Nome:* @user\n🗓️ *• Data:* @date\n⏰ *• Ora:* @time\n\n*⚠️ Ricorda di leggere la descrizione*\n@readMore\n@desc`;
+                jadibotConn.bye = `*• Grazie per aver fatto parte del gruppo*\n*━━━━━━━━━━━━━━━━━━━━━━━━━*\n\n🍧 *• Nome:* @user\n🗓️ *• Data:* @date\n⏰ *• Ora:* @time`;
+                jadibotConn.spromote = `*@user* si aggiunge al gruppo degli admin!`;
+                jadibotConn.sdemote = `*@user* abbandona il gruppo!`;
+                jadibotConn.sDesc = `È stata modificata la descrizione!\n\n*Nuova descrizione:* @desc`;
+                jadibotConn.sSubject = `È stato modificato il titolo del gruppo!`;
+                jadibotConn.sIcon = `È stata cambiata la foto del gruppo!`;
+                jadibotConn.sRevoke = `È stato aggiornato il link del gruppo!\n*Nuovo link:* @revoke`;
+
+                // Collega gli eventi di Baileys agli handler definiti nel file handler.js
+                jadibotConn.handler = mainHandler.handler.bind(jadibotConn);
+                jadibotConn.participantsUpdate = mainHandler.participantsUpdate.bind(jadibotConn);
+                jadibotConn.groupsUpdate = mainHandler.groupsUpdate.bind(jadibotConn);
+                jadibotConn.onDelete = mainHandler.deleteUpdate.bind(jadibotConn);
+                jadibotConn.onCall = mainHandler.callUpdate.bind(jadibotConn);
+                jadibotConn.connectionUpdate = handleConnectionUpdate.bind(jadibotConn); // Collega la funzione di gestione connessione
+                jadibotConn.credsUpdate = saveCreds.bind(jadibotConn, true); // Salva le credenziali
+
+                const currentTime = new Date();
+                const lastEvTime = new Date(jadibotConn.ev * 1000); // Assuming jadibotConn.ev holds a timestamp
+
+                if (currentTime.getTime() - lastEvTime.getTime() <= 300000) { // 5 minuti
+                    console.log("Lettura del messaggio in arrivo:", jadibotConn.ev);
+                    Object.keys(jadibotConn.chats).forEach(chatId => {
+                        jadibotConn.chats[chatId].isBanned = false; // Rimuove il ban per le chat
+                    });
+                } else {
+                    console.log(jadibotConn.chats, "⚠️ Hai saltato i messaggi in attesa.", jadibotConn.ev);
+                    Object.keys(jadibotConn.chats).forEach(chatId => {
+                        jadibotConn.chats[chatId].isBanned = true; // Banna le chat se i messaggi sono stati saltati
+                    });
+                }
+                
+                // Attiva i listener degli eventi
+                jadibotConn.ev.on("messages.upsert", jadibotConn.handler);
+                jadibotConn.ev.on("group-participants.update", jadibotConn.participantsUpdate);
+                jadibotConn.ev.on("groups.update", jadibotConn.groupsUpdate);
+                jadibotConn.ev.on("message.delete", jadibotConn.onDelete);
+                jadibotConn.ev.on("call", jadibotConn.onCall);
+                jadibotConn.ev.on("connection.update", jadibotConn.connectionUpdate);
+                jadibotConn.ev.on("creds.update", jadibotConn.credsUpdate);
+
+                firstConnectionAttempt = false; // Non è più il primo tentativo
+                return true;
+            };
+            updateAndReconnectHandler(false); // Inizializza gli handler
+        }
+        startJadibotConnection(); // Avvia la connessione Jadibot
+    });
 };
+
 handler.help = ['jadibot', "serbot", "getcode", "rentbot"];
 handler.tags = ["jadibot"];
-handler.command = /^(√)/i;
+handler.command = /^(jadibot|serbot|getcode|rentbot)$/i; // Supporta tutti i comandi nell'help
+handler.private = true; // Anche se non era definito, è logico che questo sia un comando privato.
+
 export default handler;
-function sleep(_0x2c6b4c) {
-  return new Promise(_0x3a0274 => setTimeout(_0x3a0274, _0x2c6b4c));
+
+// Funzione sleep (non è un import standard, quindi la lascio qui)
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

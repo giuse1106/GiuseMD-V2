@@ -33,8 +33,8 @@
       "muto": false
     },
     "19173829810@s.whatsapp.net": {
-      "messaggi": 81,
-      "exp": 522,
+      "messaggi": 89,
+      "exp": 576,
       "limit": 20,
       "money": null,
       "blasphemy": 0,
@@ -214,7 +214,7 @@
       "antiPorno": true,
       "muto": false,
       "expired": 0,
-      "messaggi": 134,
+      "messaggi": 140,
       "blasphemy": 0,
       "premium": false,
       "premiumTime": 0,
@@ -331,7 +331,7 @@
       "antiPorno": true,
       "muto": false,
       "expired": 0,
-      "messaggi": 6,
+      "messaggi": 8,
       "blasphemy": 0,
       "premium": false,
       "premiumTime": 0,
@@ -750,6 +750,12 @@
       "success": 2,
       "last": 1748948097054,
       "lastSuccess": 1748948097054
+    },
+    "info-ping.js": {
+      "total": 2,
+      "success": 2,
+      "last": 1748986866080,
+      "lastSuccess": 1748986866080
     }
   },
   "msgs": {},

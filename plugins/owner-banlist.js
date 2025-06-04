@@ -1,18 +1,35 @@
 let handler = async (m, { conn, isOwner }) => {
-let chats = Object.entries(global.db.data.chats).filter(chat => chat[1].isBanned)
-let users = Object.entries(global.db.data.users).filter(user => user[1].banned)
-let caption = `
-┌〔𝐔𝐭𝐞𝐧𝐭𝐢 𝐛𝐥𝐨𝐜𝐜𝐚𝐭𝐢 👨🏻‍✈️〕
-├ 𝐓𝐨𝐭𝐚𝐥𝐞 : ${users.length} ${users ? '\n' + users.map(([jid], i) => `
-├ ${isOwner ? '@' + jid.split`@`[0] : jid}`.trim()).join('\n') : '├'}
-└────
+    // Filtra le chat e gli utenti bannati dal database globale
+    let chatsBanned = Object.entries(global.db.data.chats).filter(chat => chat[1].isBanned);
+    let usersBanned = Object.entries(global.db.data.users).filter(user => user[1].banned);
 
-┌〔𝐂𝐡𝐚𝐭 𝐛𝐥𝐨𝐜𝐜𝐚𝐭𝐞 👨🏻‍✈️〕
-├ 𝐓𝐨𝐭𝐚𝐥𝐞 : ${chats.length} ${chats ? '\n' + chats.map(([jid], i) => `
-├ ${isOwner ? '@' + jid.split`@`[0] : jid}`.trim()).join('\n') : '├'}
-└────
-`.trim()
-m.reply(caption, null, {mentions: conn.parseMention(caption)})}
-handler.command = /^banlist(ned)?|ban(ned)?list|daftarban(ned)?$/i
-handler.rowner = true
-export default handler
+    // Prepara il nome del bot per il footer, se necessario
+    const botNewsletterName = global.db.data.nomedelbot || "꧁ ĝ̽̓̀͑ỉ͔͖̜͌ư̡͕̭̇s̠҉͍͊ͅẹ̿͋̒̕ẹ̿͋̒̕ ꧂ 「 ᵇᵒᵗ 」";
+
+    // Costruisci il messaggio con la lista degli utenti e delle chat bannate
+    let caption = `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ 🚫 *LISTA BAN* 🚫
+┊ ──────────────────────
+┊ 👨🏻‍✈️ *Utenti Bloccati:*
+┊ ➢ *Totale:* ${usersBanned.length}
+${usersBanned.length > 0 ? usersBanned.map(([jid], i) => 
+`┊ ➢ ${isOwner ? '@' + jid.split('@')[0] : jid}`.trim()).join('\n') : '┊ ➢ Nessun utente bloccato.'}
+┊ ──────────────────────
+┊ 💬 *Chat Bloccate:*
+┊ ➢ *Totale:* ${chatsBanned.length}
+${chatsBanned.length > 0 ? chatsBanned.map(([jid], i) => 
+`┊ ➢ ${isOwner ? '@' + jid.split('@')[0] : jid}`.trim()).join('\n') : '┊ ➢ Nessuna chat bloccata.'}
+┊ ──────────────────────
+┊ > ${botNewsletterName}
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》`;
+
+    // Invia il messaggio, menzionando i JID se l'owner lo permette
+    m.reply(caption, null, { 
+        mentions: conn.parseMention(caption) 
+    });
+};
+
+handler.command = /^(banlist|bannedlist|daftarban|daftarbanlist)$/i; // Comandi supportati
+handler.owner = true; // Solo l'owner può usare questo comando
+
+export default handler;

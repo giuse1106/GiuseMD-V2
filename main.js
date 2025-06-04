@@ -26,6 +26,7 @@ const {proto} = (await import('@whiskeysockets/baileys')).default;
 const {DisconnectReason, useMultiFileAuthState, MessageRetryMap, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, jidNormalizedUser, PHONENUMBER_MCC} = await import('@whiskeysockets/baileys');
 import readline from 'readline';
 import NodeCache from 'node-cache';
+import fs from 'fs'; // Aggiunto import per fs per la gestione di creds.json
 const {CONNECTING} = ws;
 const {chain} = lodash;
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000;
@@ -54,7 +55,7 @@ global.prefix = new RegExp('^[' + (opts['prefix'] || '*/i!#$%+£¢€¥^°=¶∆
 
 global.db = new Low(/https?:\/\//.test(opts['db'] || '') ? new cloudDBAdapter(opts['db']) : new JSONFile(`${opts._[0] ? opts._[0] + '_' : ''}database.json`));
 
-global.DATABASE = global.db; 
+global.DATABASE = global.db;
 global.loadDatabase = async function loadDatabase() {
   if (global.db.READ) {
     return new Promise((resolve) => setInterval(async function() {
@@ -129,27 +130,27 @@ opcion = '1'
 if (!methodCodeQR && !methodCode && !fs.existsSync(`./${authFile}/creds.json`)) {
 do {
 let lineM = '⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》';
-opcion = await question(`╭${lineM}  
+opcion = await question(`╭${lineM}
 ┊ ${chalk.blueBright('╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}
 ┊ ${chalk.blueBright('┊')} ${chalk.blue.bgBlue.bold.cyan('METODO VINCOLANTE')}
-┊ ${chalk.blueBright('╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}   
-┊ ${chalk.blueBright('╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}     
+┊ ${chalk.blueBright('╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}
+┊ ${chalk.blueBright('╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}
 ┊ ${chalk.blueBright('┊')} ${chalk.green.bgMagenta.bold.yellow('COME CONNETTERSI?')}
 ┊ ${chalk.blueBright('┊')} ${chalk.bold.redBright(`⇢  Opzione 1:`)} ${chalk.greenBright('Codice qr')}
 ┊ ${chalk.blueBright('┊')} ${chalk.bold.redBright(`⇢  Opzione 2:`)} ${chalk.greenBright('Codice 8 caratteri')}
 ┊ ${chalk.blueBright('╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}
-┊ ${chalk.blueBright('╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}     
+┊ ${chalk.blueBright('╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}
 ┊ ${chalk.italic.magenta('Scrivi solo il numero(1 o 2)')}
 ┊ ${chalk.blueBright('┊')} ${chalk.italic.magenta('per connetterti')}
-┊ ${chalk.blueBright('╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')} 
-┊ ${chalk.blueBright('╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}    
+┊ ${chalk.blueBright('╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}
+┊ ${chalk.blueBright('╭┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}
 ┊ ${chalk.red.bgRed.bold.green('CONSIGLIO')}
 ┊ ${chalk.blueBright('┊')} ${chalk.italic.cyan('Se usi Termux, Replit, Linux o Windows')}
 ┊ ${chalk.blueBright('┊')} ${chalk.italic.cyan('Utilizzare questi comandi per l esecuzione diretta:')}
 ┊ ${chalk.blueBright('┊')} ${chalk.bold.yellow(`npm run qr ${chalk.italic.magenta(`(Inizia con il codice QR)`)}`)}
 ┊ ${chalk.blueBright('┊')} ${chalk.bold.yellow(`npm run code ${chalk.italic.magenta(`(Inizia con il codice a 8 cifre)`)}`)}
 ┊ ${chalk.blueBright('┊')} ${chalk.bold.yellow(`npm start ${chalk.italic.magenta(`(Avvio predefinito con opzioni)`)}`)}
-┊ ${chalk.blueBright('╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')} 
+┊ ${chalk.blueBright('╰┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅')}
 ╰${lineM}\n${chalk.bold.magentaBright('---> ')}`);
 if (!/^[1-2]$/.test(opcion)) {
 console.log(chalk.bold.redBright('Opzione non valida. Inserisci solo 1 o 2.'));
@@ -161,15 +162,15 @@ console.info = () => {}
 const connectionOptions = {
 logger: pino({ level: 'silent' }),
 printQRInTerminal: opcion == '1' ? true : methodCodeQR ? true : false,
-mobile: MethodMobile, 
+mobile: MethodMobile,
 browser: opcion == '1' ? ['𝐂𝐡𝐚𝐭𝐔𝐧𝐢𝐭𝐲-𝐁𝐨𝐭 𝟐.𝟎', 'Safari', '3.0.0'] : methodCodeQR ? ['𝐂𝐡𝐚𝐭𝐔𝐧𝐢𝐭𝐲-𝐁𝐨𝐭', 'Safari', '3.0.0'] : ['Ubuntu', 'Chrome', '110.0.5585.95'],
 auth: {
 creds: state.creds,
 keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
 },
-markOnlineOnConnect: true, 
-generateHighQualityLinkPreview: true, 
-syncFullHistory: true,  
+markOnlineOnConnect: true,
+generateHighQualityLinkPreview: true,
+syncFullHistory: true,
 getMessage: async (clave) => {
 let jid = jidNormalizedUser(clave.remoteJid)
 let msg = await store.loadMessage(jid, clave.id)
@@ -177,8 +178,12 @@ return msg?.message || ""
 },
 msgRetryCounterCache,
 msgRetryCounterMap,
-defaultQueryTimeoutMs: undefined, 
-version,  
+defaultQueryTimeoutMs: undefined,
+version,
+// AGGIUNTO: Opzioni Puppeteer per la gestione della sandbox
+puppeteer: {
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
+},
 }
 
 global.conn = makeWASocket(connectionOptions);
@@ -190,7 +195,7 @@ if (opcion === '2' || methodCode) {
 //process.exit()
 //}
 opcion = '2'
-if (!conn.authState.creds.registered) {  
+if (!conn.authState.creds.registered) {
 if (MethodMobile) throw new Error(`Impossibile utilizzare un codice di accoppiamento con l'API mobile`)
 
 let numeroTelefono
@@ -205,19 +210,19 @@ numeroTelefono = await question(chalk.bgBlack(chalk.bold.yellowBright(`𝐈𝐧�
 numeroTelefono = numeroTelefono.replace(/[^0-9]/g, '')
 
 if (numeroTelefono.match(/^\d+$/) && Object.keys(PHONENUMBER_MCC).some(v => numeroTelefono.startsWith(v))) {
-break 
+break
 } else {
 console.log(chalk.bgBlack(chalk.bold.redBright(`𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐢 𝐭𝐞𝐥𝐞𝐟𝐨𝐧𝐨 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: +39 333 333 3333\n`)))
 }}
-rl.close()  
-} 
+rl.close()
+}
 
-        setTimeout(async () => {
-            let codigo = await conn.requestPairingCode(numeroTelefono)
-            codigo = codigo?.match(/.{1,4}/g)?.join("-") || codigo
-            console.log(chalk.yellowBright('𝐂𝐨𝐥𝐥𝐞𝐠𝐚 𝐢𝐥 𝐭𝐮𝐨 𝐛𝐨𝐭...'));
-            console.log(chalk.black(chalk.bgCyanBright(`𝐈𝐍𝐒𝐄𝐑𝐈𝐒𝐂𝐈 𝐐𝐔𝐄𝐒𝐓𝐎 𝐂𝐎𝐃𝐈𝐂𝐄:`)), chalk.black(chalk.bgGreenBright(codigo)))
-        }, 3000)
+            setTimeout(async () => {
+                let codigo = await conn.requestPairingCode(numeroTelefono)
+                codigo = codigo?.match(/.{1,4}/g)?.join("-") || codigo
+                console.log(chalk.yellowBright('𝐂𝐨𝐥𝐥𝐞𝐠𝐚 𝐢𝐥 𝐭𝐮𝐨 𝐛𝐨𝐭...'));
+                console.log(chalk.black(chalk.bgCyanBright(`𝐈𝐍𝐒𝐄𝐑𝐈𝐒𝐂𝐈 𝐐𝐔𝐄𝐒𝐓𝐎 𝐂𝐎𝐃𝐈𝐂𝐄:`)), chalk.black(chalk.bgGreenBright(codigo)))
+            }, 3000)
 }}
 }
 
@@ -245,15 +250,15 @@ if (opts['server']) (await import('./server.js')).default(global.conn, PORT);
         Aunque no dudara tan solo un segundo
         que me arrepiento de ser un grasoso
         Por que la grasa es un sentimiento
-        - El waza 👻👻👻👻 (Aiden)            
-        
-   Yo tambien se hacer momazos Aiden...
+        - El waza 👻👻👻👻 (Aiden)
+
+    Yo tambien se hacer momazos Aiden...
         ahi te va el ajuste de los borrados
         inteligentes de las sesiones y de los sub-bot
-        By (Rey Endymion 👺👍🏼) 
-        
-   Ninguno es mejor que tilin god
-        - atte: sk1d             */
+        By (Rey Endymion 👺👍🏼)
+
+    Ninguno es mejor que tilin god
+        - atte: sk1d          */
 
 function clearTmp() {
   const tmp = [join(__dirname, './tmp')];
@@ -276,7 +281,7 @@ prekey = [...prekey, ...filesFolderPreKeys]
 filesFolderPreKeys.forEach(files => {
 unlinkSync(`./Sessioni/${files}`)
 })
-} 
+}
 
 function purgeSessionSB() {
 try {
@@ -306,14 +311,15 @@ readdirSync(dir, (err, files) => {
 if (err) throw err
 files.forEach(file => {
 const filePath = path.join(dir, file)
-stat(filePath, (err, stats) => {
+// Utilizza stat anziché fs.stat direttamente nel ciclo per evitare errori di callback multipli
+fs.stat(filePath, (err, stats) => { // Modificato: Aggiunto 'fs.' davanti a stat
 if (err) throw err;
-if (stats.isFile() && stats.mtimeMs < oneHourAgo && file !== 'creds.json') { 
-unlinkSync(filePath, err => {  
+if (stats.isFile() && stats.mtimeMs < oneHourAgo && file !== 'creds.json') {
+unlinkSync(filePath, err => {
 if (err) throw err
 console.log(chalk.bold.green(`Archivo ${file} borrado con éxito`))
 })
-} else {  
+} else {
 console.log(chalk.bold.red(`Archivo ${file} no borrado` + err))
 } }) }) }) })
 }
@@ -332,7 +338,7 @@ async function connectionUpdate(update) {
 if (update.qr != 0 && update.qr != undefined || methodCodeQR) {
 if (opcion == '1' || methodCodeQR) {
     console.log(chalk.yellow('𝐒𝐜𝐚𝐧𝐬𝐢𝐨𝐧𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐝𝐢𝐜𝐞 𝐐𝐑, 𝐢𝐥 𝐜𝐨𝐝𝐢𝐜𝐞 𝐐𝐑 𝐬𝐜𝐚𝐝𝐞 𝐭𝐫𝐚 𝟔𝟎 𝐬𝐞𝐜𝐨𝐧𝐝𝐢.'));
- }}
+}}
   if (connection == 'open') {
     try {
         await conn.groupAcceptInvite('LChd7a5px3n3Jr83egpWvr');
@@ -350,7 +356,7 @@ if (opcion == '1' || methodCodeQR) {
 let reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
 if (reason == 405) {
 await fs.unlinkSync("./Sessioni/" + "creds.json")
-console.log(chalk.bold.redBright(`[ ⚠️ ] 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐬𝐨𝐬𝐭𝐢𝐭𝐮𝐢𝐭𝐚, 𝐫𝐢𝐚𝐯𝐯𝐢𝐨 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...\n𝐒𝐞 𝐚𝐩𝐩𝐚𝐫𝐞 𝐮𝐧 𝐞𝐫𝐫𝐨𝐫𝐞, 𝐫𝐢𝐜𝐨𝐦𝐢𝐧𝐜𝐢𝐚 𝐜𝐨𝐧: 𝐧𝐩𝐦 𝐬𝐭𝐚𝐫𝐭`)) 
+console.log(chalk.bold.redBright(`[ ⚠️ ] 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐬𝐨𝐬𝐭𝐢𝐭𝐮𝐢𝐭𝐚, 𝐫𝐢𝐚𝐯𝐯𝐢𝐨 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...\n𝐒𝐞 𝐚𝐩𝐩𝐚𝐫𝐞 𝐮𝐧 𝐞𝐫𝐫𝐨𝐫𝐞, 𝐫𝐢𝐜𝐨𝐦𝐢𝐧𝐜𝐢𝐚 𝐜𝐨𝐧: 𝐧𝐩𝐦 𝐬𝐭𝐚𝐫𝐭`))
 process.send('reset')}
 if (connection === 'close') {
     if (reason === DisconnectReason.badSession) {

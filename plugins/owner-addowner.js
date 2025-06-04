@@ -1,123 +1,120 @@
-const _0x533e2d = _0x6970;
+// Crediti by Gabs
 
-(function (_0x363953, _0x3b12b5) {
-    const _0x2bf6b5 = _0x6970;
-    const _0x160b73 = _0x363953();
+// Questi import non sono direttamente usati nell'handler, ma sono stati mantenuti
+// per coerenza con il tuo setup, nel caso siano utili in altre parti del bot.
+import 'os';
+import 'util';
+import 'human-readable';
+import '@whiskeysockets/baileys';
+import 'fs';
+import 'perf_hooks';
 
-    while (true) {
-        try {
-            const _0x4abfaf =
-                (parseInt(_0x2bf6b5(0x1c1)) / 1) * (parseInt(_0x2bf6b5(0x1d5)) / 2) +
-                parseInt(_0x2bf6b5(0x1d8)) / 3 -
-                parseInt(_0x2bf6b5(0x1d6)) / 4 +
-                (parseInt(_0x2bf6b5(0x1be)) / 5) * (-parseInt(_0x2bf6b5(0x1c7)) / 6) +
-                parseInt(_0x2bf6b5(0x1d3)) / 7 +
-                (parseInt(_0x2bf6b5(0x1c9)) / 8) * (-parseInt(_0x2bf6b5(0x1d2)) / 9) +
-                parseInt(_0x2bf6b5(0x1d9)) / 10;
+// Ho rimosso l'offuscamento e ho ricostruito la logica.
+// La funzione _0x6970 e il suo IIFE non sono più necessari.
 
-            if (_0x4abfaf === _0x3b12b5) break;
-            else _0x160b73.push(_0x160b73.shift());
-        } catch (_0x5888c4) {
-            _0x160b73.push(_0x160b73.shift());
-        }
+const handler = async (m, { conn, text, args, usedPrefix, command }) => {
+    // Stringhe usate nel codice originale, ora chiare
+    const addOwnerCommand = 'addowner';
+    const removeOwnerCommand = 'rowner';
+    const successMessage = '𝐐𝐮𝐞𝐬𝐭𝐨 𝐧𝐮𝐦𝐞𝐫𝐨 𝐞́ 𝐬𝐭𝐚𝐭𝐨 𝐚𝐠𝐠𝐢𝐮𝐧𝐭𝐨 𝐚𝐥𝐥𝐚 𝐥𝐢𝐬𝐭𝐚 𝐝𝐞𝐠𝐥𝐢 𝐨𝐰𝐧𝐞𝐫';
+    const removeSuccessMessage = '𝐐𝐮𝐞𝐬𝐭𝐨 𝐧𝐮𝐦𝐞𝐫𝐨 𝐞́ 𝐬𝐭𝐚𝐭𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚𝐥𝐥𝐚 𝐥𝐢𝐬𝐭𝐚 𝐝𝐞𝐠𝐥𝐢 𝐨𝐰𝐧𝐞𝐫';
+    const vcardString = `BEGIN:VCARD
+VERSION:3.0
+N:;Unlimited;;;
+FN:Unlimited
+ORG:Unlimited
+TITLE:
+item1.TEL;waid=15395490858:+1 (539) 549-0858
+item1.X-ABLabel:Unlimited
+X-WA-BIZ-DESCRIPTION:ofc
+X-WA-BIZ-NAME:Unlimited
+END:VCARD`;
+
+    // Costruisci l'esempio di utilizzo del comando
+    const example = `
+╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+┊ 💡 *ESEMPIO DI UTILIZZO*
+┊ ──────────────────────
+┊ ✧‌⃟ᗒ \`${usedPrefix}${command} @${m.sender.split('@')[0]}\`
+┊ ✧‌⃟ᗒ \`${usedPrefix}${command} ${m.sender.split('@')[0]}\`
+┊ ✧‌⃟ᗒ \`${usedPrefix}${command} (rispondendo a un messaggio)\`
+╰⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
+`;
+
+    // Determina il target (JID) per l'aggiunta/rimozione
+    let target = m.mentionedJid[0] 
+        ? m.mentionedJid[0] 
+        : m.quoted 
+            ? m.quoted.sender 
+            : text 
+                ? text.replace(/[^0-9]/g, '') + '@s.whatsapp.net' // Pulisce il testo e aggiunge il suffisso JID
+                : false;
+
+    // Se non è stato specificato un target, invia l'esempio
+    if (!target) {
+        return conn.reply(m.chat, example, m, { 
+            mentions: [m.sender] // Menzione il mittente nell'esempio
+        });
     }
-})(_0x4b48, 0x95bc0);
 
-const handler = async (_0x2e6072, { conn: _0x3c9141, text: _0x5128e9, args: _0xe83882, usedPrefix: _0x2b8f88, command: _0x274959 }) => {
-    const _0x48e36b = _0x6970;
-    const example =
-        '𝐄𝐬𝐞𝐦𝐩𝐢𝐨:\x0a✧‌⃟ᗒ ' +
-        (_0x2b8f88 + _0x274959) +
-        ' @' +
-        _0x2e6072[_0x48e36b(0x1c6)].split('@')[0] +
-        _0x48e36b(0x1ce) +
-        (_0x2b8f88 + _0x274959) +
-        ' ' +
-        _0x2e6072[_0x48e36b(0x1c6)].split('@')[0] +
-        '\x0a✧‌⃟ᗒ ' +
-        (_0x2b8f88 + _0x274959) +
-        _0x48e36b(0x1c3);
+    // Oggetto messaggio base per la quotazione
+    let baseMessage = {
+        key: { participants: '0@s.whatsapp.net', fromMe: false, id: 'Halo' }, // ID generico
+        message: { extendedTextMessage: { text: '𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐞𝐬𝐞𝐠𝐮𝐢𝐭𝐨 ✓', vcard: vcardString } },
+        participant: '0@s.whatsapp.net',
+    };
 
-    const target =
-        _0x2e6072[_0x48e36b(0x1d1)][0]
-            ? _0x2e6072[_0x48e36b(0x1d1)][0]
-            : _0x2e6072[_0x48e36b(0x1d7)]
-            ? _0x2e6072[_0x48e36b(0x1d7)][_0x48e36b(0x1c6)]
-            : _0x5128e9
-            ? _0x5128e9[_0x48e36b(0x1d0)](/[^0-9]/g, '') + _0x48e36b(0x1c8)
-            : false;
+    switch (command) {
+        case addOwnerCommand: // Comando 'addowner'
+            // Aggiungi il numero alla lista globale degli owner
+            // Assicurati che 'global.owner' sia un array e che ogni elemento sia un array di un elemento [JID]
+            // Se global.owner non è inizializzato, potresti doverlo fare altrove.
+            // Esempio: global.owner = global.owner || [];
+            global.owner.push([target.split('@')[0]]); // Aggiunge solo il numero senza il '@s.whatsapp.net'
 
-    if (!target)
-        return _0x3c9141['reply'](_0x2e6072[_0x48e36b(0x1bc)], example, _0x2e6072, { mentions: [_0x2e6072[_0x48e36b(0x1c6)]] });
-
-    switch (_0x274959) {
-        case _0x48e36b(0x1cd):
-            const numberToAdd = target;
-            global[_0x48e36b(0x1d4)].push([numberToAdd]);
-            let messageAdd = {
-                key: { participants: '0@s.whatsapp.net', fromMe: false, id: 'Halo' },
-                message: { extendedTextMessage: { text: _0x48e36b(0x1cc), vcard: _0x48e36b(0x1cf) } },
-                participant: '0@s.whatsapp.net',
-            };
-            await _0x3c9141['reply'](
-                _0x2e6072[_0x48e36b(0x1bc)],
-                '𝐐𝐮𝐞𝐬𝐭𝐨 𝐧𝐮𝐦𝐞𝐫𝐨 𝐞́ 𝐬𝐭𝐚𝐭𝐨 𝐚𝐠𝐠𝐢𝐮𝐧𝐭𝐨 𝐚𝐥𝐥𝐚 𝐥𝐢𝐬𝐭𝐚 𝐝𝐞𝐠𝐥𝐢 𝐨𝐰𝐧𝐞𝐫',
-                messageAdd
+            await conn.reply(
+                m.chat,
+                successMessage,
+                baseMessage // Usa l'oggetto baseMessage per la quotazione
             );
             break;
 
-        case _0x48e36b(0x1c5):
-            const numberToRemove = target;
-            const index = global[_0x48e36b(0x1d4)].findIndex((_0x460f79) => _0x460f79[0] === numberToRemove);
+        case removeOwnerCommand: // Comando 'rowner'
+            // Rimuovi il numero dalla lista globale degli owner
+            const numberToRemove = target.split('@')[0]; // Rimuovi solo il numero senza il '@s.whatsapp.net'
+            const index = global.owner.findIndex((ownerEntry) => ownerEntry[0] === numberToRemove);
 
             if (index !== -1) {
-                global[_0x48e36b(0x1d4)].splice(index, 1);
-                let messageRemove = {
-                    key: { participants: _0x48e36b(0x1c4), fromMe: false, id: _0x48e36b(0x1ca) },
-                    message: { extendedTextMessage: { text: _0x48e36b(0x1cc), vcard: _0x48e36b(0x1cf) } },
-                    participant: _0x48e36b(0x1c4),
-                };
-                await _0x3c9141['reply'](
-                    _0x2e6072[_0x48e36b(0x1bc)],
-                    '𝐐𝐮𝐞𝐬𝐭𝐨 𝐧𝐮𝐦𝐞𝐫𝐨 𝐞́ 𝐬𝐭𝐚𝐭𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚𝐥𝐥𝐚 𝐥𝐢𝐬𝐭𝐚 𝐝𝐞𝐠𝐥𝐢 𝐨𝐰𝐧𝐞𝐫',
-                    messageRemove
+                global.owner.splice(index, 1); // Rimuovi l'elemento dall'array
+                await conn.reply(
+                    m.chat,
+                    removeSuccessMessage,
+                    baseMessage // Usa l'oggetto baseMessage per la quotazione
+                );
+            } else {
+                await conn.reply(
+                    m.chat,
+                    '𝐐𝐮𝐞𝐬𝐭𝐨 𝐧𝐮𝐦𝐞𝐫𝐨 𝐧𝐨𝐧 𝐞́ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐧𝐞𝐥𝐥𝐚 𝐥𝐢𝐬𝐭𝐚 𝐝𝐞𝐠𝐥𝐢 𝐨𝐰𝐧𝐞𝐫.', // Messaggio se il numero non è trovato
+                    baseMessage
                 );
             }
             break;
     }
 };
 
-function _0x6970(_0x248cd4, _0x4c1c5b) {
-    const _0x4b48a0 = _0x4b48();
-    return (_0x6970 = function (_0x69705, _0x193082) {
-        _0x69705 = _0x69705 - 0x1bc;
-        let _0x5e5afe = _0x4b48a0[_0x69705];
-        return _0x5e5afe;
-    })(_0x248cd4, _0x4c1c5b);
-}
+handler.help = ["addowner", "rowner"];
+handler.tags = ['owner']; // Aggiunto tag 'owner'
+handler.command = /^(addowner|rowner)$/i; // Supporta entrambi i comandi
 
-function _0x4b48() {
-    const _0x46c2e8 = [
-        'rowner',
-        '𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐞𝐬𝐞𝐠𝐮𝐢𝐭𝐨 ✓',
-        'addowner',
-        '\x0a✧‌⃟ᗒ ',
-        'BEGIN:VCARD\x0aVERSION:3.0\x0aN:;Unlimited;;;\x0aFN:Unlimited\x0aORG:Unlimited\x0aTITLE:\x0aitem1.TEL;waid=15395490858:+1\x20(539)\x20549-0858\x0aitem1.X-ABLabel:Unlimited\x0aX-WA-BIZ-DESCRIPTION:ofc\x0aX-WA-BIZ-NAME:Unlimited\x0aEND:VCARD',
-        'replace',
-        'mentionedJid',
-        '1309059KZnOBq',
-        '4932081oeqWpt',
-        'owner',
-        '2LCxrHn',
-        '4259848bpbaNb',
-        'quoted',
-        '1316190mNzVsU',
-        '8005590bzqoEP',
-        'chat',
-        'findIndex',
-        '2660665MxKNra',
-        'splice',
-        'split',
-        '944119ISVatW',
-        'reply',
-        '\x20<𝐫𝐢𝐩𝐫𝐞𝐧𝐝𝐢
+export default handler;
+
+// La funzione clockString non è usata in questo handler, quindi la si può rimuovere
+// se non è utilizzata altrove. L'ho rimossa dal file finale per pulizia.
+/*
+function clockString(ms) {
+    let h = Math.floor(ms / 3600000);
+    let m = Math.floor(ms / 60000) % 60;
+    let s = Math.floor(ms / 1000) % 60;
+    return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
+}
+*/
