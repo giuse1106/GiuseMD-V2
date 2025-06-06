@@ -49,7 +49,7 @@ const handler = async (m, { conn }) => {
     let systemInfoMessage = `╭⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 》
 ┊ ⚙️ *STATO DEL SISTEMA*
 ┊ ──────────────────────
-┊ 🚩 *Host:* ${hostname}
+┊ 🚩 *Host:* GiuseMD-V2 OFFICIAL
 ┊ 🏆 *Sistema Operativo:* ${platform}
 ┊ 💫 *Architettura:* ${arch}
 ┊ ──────────────────────
