@@ -12,7 +12,7 @@ let handler = async (m, { conn, text, isOwner }) => {
 
     m.reply('Tentativo di aggiornare i plugin dalla repository...');
 
-    const repoUrl = 'https://api.github.com/repos/giuse1106/giusemd/contents/plugins';
+    const repoUrl = 'https://api.github.com/repos/giuse1106/giusemd-v2/contents/plugins';
 
     try {
         const response = await fetch(repoUrl);
